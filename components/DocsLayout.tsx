@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import TableOfContents from './TableOfContents';
+import BackToTop from './BackToTop';
+import KeployLogo from './KeployLogo';
 
 interface TocItem {
   id: string;
@@ -21,7 +23,7 @@ export default function DocsLayout({ children, tocItems }: DocsLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-[#0B0F17] text-slate-900 dark:text-slate-100 transition-colors">
-      {/* Sticky Header */}
+      {/* Sticky Header with Reading Progress */}
       <Header
         mobileNavOpen={mobileNavOpen}
         onToggleMobileNav={() => setMobileNavOpen(!mobileNavOpen)}
@@ -56,11 +58,15 @@ export default function DocsLayout({ children, tocItems }: DocsLayoutProps) {
         </aside>
       </div>
 
+      {/* Floating Back To Top Button */}
+      <BackToTop />
+
       {/* Footer */}
       <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-slate-50/50 dark:bg-[#080C14] py-8 text-xs text-slate-500 dark:text-slate-400 mt-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span>🐰 Built for the</span>
+          <div className="flex items-center gap-2.5">
+            <KeployLogo size={20} />
+            <span>Built for the</span>
             <strong className="text-slate-700 dark:text-slate-300 font-semibold">
               Keploy DevRel Candidate Assignment
             </strong>
@@ -83,7 +89,7 @@ export default function DocsLayout({ children, tocItems }: DocsLayoutProps) {
               Documentation
             </a>
             <a
-              href="https://github.com/keploy/keploy"
+              href="https://github.com/atharv9003/keploy"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-orange-500 transition-colors"
