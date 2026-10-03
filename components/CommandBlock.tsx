@@ -10,6 +10,17 @@ interface CommandBlockProps {
   expectedOutput?: string;
 }
 
+function extractText(node: React.ReactNode): string {
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (!node) return '';
+  if (Array.isArray(node)) return node.map(extractText).join('');
+  if (React.isValidElement(node) && (node.props as any)) {
+    return extractText((node.props as any).children);
+  }
+  return '';
+}
+
 export default function CommandBlock({
   command,
   children,
@@ -17,9 +28,11 @@ export default function CommandBlock({
   description,
   expectedOutput,
 }: CommandBlockProps) {
-  const rawContent = typeof command === 'string' ? command : typeof children === 'string' ? children : '';
-  const trimmed = (rawContent || '').trim();
+  const rawCommand = typeof command === 'string' ? command : '';
+  const childText = extractText(children);
+  const trimmed = (rawCommand || childText || '').trim();
   const promptSymbol = shell === 'powershell' ? 'PS >' : '$';
+  const resolvedOutput = expectedOutput || (rawCommand && childText ? childText : '');
 
   return (
     <div className="my-5 rounded-xl border border-slate-700/60 bg-[#090D16] shadow-md text-sm font-mono overflow-hidden">
@@ -50,13 +63,13 @@ export default function CommandBlock({
       </div>
 
       {/* Expected output if present */}
-      {expectedOutput && (
+      {resolvedOutput && (
         <div className="border-t border-slate-800/80 bg-[#060910] p-3 text-xs text-slate-400 overflow-x-auto">
           <div className="text-[11px] font-sans font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
             Expected Output
           </div>
           <pre className="!bg-transparent !p-0 !m-0 text-slate-300">
-            <code>{(expectedOutput || '').trim()}</code>
+            <code>{(resolvedOutput || '').trim()}</code>
           </pre>
         </div>
       )}

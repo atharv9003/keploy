@@ -29,7 +29,14 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800/60 animate-pulse" />
+      <button
+        type="button"
+        disabled
+        aria-label="Toggle theme"
+        className="p-2 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/80 text-slate-400 opacity-60 cursor-default"
+      >
+        <span className="w-4 h-4 block" />
+      </button>
     );
   }
 

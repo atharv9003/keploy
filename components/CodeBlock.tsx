@@ -10,6 +10,17 @@ interface CodeBlockProps {
   showLineNumbers?: boolean;
 }
 
+function extractText(node: React.ReactNode): string {
+  if (typeof node === 'string') return node;
+  if (typeof node === 'number') return String(node);
+  if (!node) return '';
+  if (Array.isArray(node)) return node.map(extractText).join('');
+  if (React.isValidElement(node) && (node.props as any)) {
+    return extractText((node.props as any).children);
+  }
+  return '';
+}
+
 export default function CodeBlock({
   code,
   children,
@@ -17,7 +28,7 @@ export default function CodeBlock({
   filename,
   showLineNumbers = false,
 }: CodeBlockProps) {
-  const rawContent = typeof code === 'string' ? code : typeof children === 'string' ? children : '';
+  const rawContent = typeof code === 'string' && code ? code : extractText(children);
   const trimmedCode = (rawContent || '').trim();
   const lines = trimmedCode ? trimmedCode.split('\n') : [''];
 

@@ -5,8 +5,17 @@ interface InfoCardProps {
   items?: { label: string; value: string; badge?: string }[];
 }
 
-export default function InfoCard({ title = '', items = [] }: InfoCardProps) {
-  const safeItems = Array.isArray(items) ? items : [];
+export default function InfoCard(props: any) {
+  const { title = '', items = [] } = props;
+  let parsedItems = items;
+  if (typeof items === 'string') {
+    try {
+      parsedItems = JSON.parse(items);
+    } catch {
+      parsedItems = [];
+    }
+  }
+  const safeItems = Array.isArray(parsedItems) ? parsedItems : [];
 
   return (
     <div className="my-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-5 shadow-sm">

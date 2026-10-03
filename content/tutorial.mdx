@@ -74,14 +74,14 @@ This service implements a two-stage email verification service:
 
 <InfoCard
   title="Quickstart Specifications"
-  items={[
-    { label: "Application Port", value: ":3001", badge: "HTTP" },
-    { label: "Cache Backend", value: "Redis :6379", badge: "Docker" },
-    { label: "Router Framework", value: "Gin v1.9+", badge: "Golang" },
-    { label: "Interceptor Engine", value: "Keploy eBPF", badge: "v2 CLI" },
-    { label: "Artifact Output", value: "./keploy/", badge: "YAML" },
-    { label: "OS Platform", value: "Windows / Linux", badge: "Native" }
-  ]}
+  items='[
+    {"label": "Application Port", "value": ":3001", "badge": "HTTP"},
+    {"label": "Cache Backend", "value": "Redis :6379", "badge": "Docker"},
+    {"label": "Router Framework", "value": "Gin v1.9+", "badge": "Golang"},
+    {"label": "Interceptor Engine", "value": "Keploy eBPF", "badge": "v2 CLI"},
+    {"label": "Artifact Output", "value": "./keploy/", "badge": "YAML"},
+    {"label": "OS Platform", "value": "Windows / Linux", "badge": "Native"}
+  ]'
 />
 </section>
 
@@ -133,10 +133,13 @@ Let's verify that your Docker daemon and developer tools are operational before 
   shell="powershell"
   description="Verify Docker engine and compose versions"
   command="docker version; docker compose version"
-  expectedOutput={`Client: Version 29.8.0
+>
+```output
+Client: Version 29.8.0
 Server: Docker Desktop 4.91.0
-Docker Compose version v5.5.1`}
-/>
+Docker Compose version v5.5.1
+```
+</CommandBlock>
 
 Next, check for the Docker bridge network. Keploy connects application containers and backing datastores using a dedicated bridge network named `keploy-network`.
 
@@ -165,17 +168,17 @@ The `gin-redis` application relies on a Redis server listening on port `6379`. Y
 
 In the repository directory (`samples-go/gin-redis/docker-compose.yml`), the Redis service is defined as:
 
-<CodeBlock
-  filename="docker-compose.yml"
-  language="yaml"
-  code={`version: '3.7'
+<CodeBlock filename="docker-compose.yml" language="yaml">
+```yaml
+version: '3.7'
 services:
   redis:
     image: redis
     container_name: myredis
     ports:
-      - "6379:6379"`}
-/>
+      - "6379:6379"
+```
+</CodeBlock>
 
 Start the Redis container in detached mode:
 
@@ -191,9 +194,12 @@ Confirm that the container is healthy and actively listening on port 6379:
   shell="powershell"
   description="Inspect active containers"
   command="docker ps --filter name=myredis"
-  expectedOutput={`CONTAINER ID   IMAGE   COMMAND                  STATUS         PORTS                    NAMES
-18c6beb0ae2a   redis   "docker-entrypoint.s…"   Up 2 days      0.0.0.0:6379->6379/tcp   myredis`}
-/>
+>
+```output
+CONTAINER ID   IMAGE   COMMAND                  STATUS         PORTS                    NAMES
+18c6beb0ae2a   redis   "docker-entrypoint.s…"   Up 2 days      0.0.0.0:6379->6379/tcp   myredis
+```
+</CommandBlock>
 </section>
 
 ---
@@ -206,10 +212,9 @@ Before running tests, examine the application logic in `samples-go/gin-redis` to
 ### 1. Redis Initialization (`helpers/redis/redisConnect.go`)
 The app connects to Redis at `localhost:6379` using `go-redis/v9`:
 
-<CodeBlock
-  filename="helpers/redis/redisConnect.go"
-  language="go"
-  code={`func Init() {
+<CodeBlock filename="helpers/redis/redisConnect.go" language="go">
+```go
+func Init() {
     RedisClient = redis.NewClient(&redis.Options{
         Addr:     "localhost:6379",
         Password: "",
@@ -221,16 +226,16 @@ The app connects to Redis at `localhost:6379` using `go-redis/v9`:
         log.Printf("Error initializing Redis client: %v", err)
         os.Exit(1)
     }
-}`}
-/>
+}
+```
+</CodeBlock>
 
 ### 2. OTP Generation Route (`controllers/GET/getVerificationCode.go`)
 When a client requests an OTP, the handler calls `email.SendEmail(requestEmail, userName)` which stores a JSON payload in Redis with a 4-hour expiration:
 
-<CodeBlock
-  filename="helpers/email/sendEmail.go"
-  language="go"
-  code={`func SendEmail(to, userName string) (int, error) {
+<CodeBlock filename="helpers/email/sendEmail.go" language="go">
+```go
+func SendEmail(to, userName string) (int, error) {
     otp := services.GenerateOTP()
     data := structure.OTPData{
         OTP:      otp,
@@ -243,20 +248,21 @@ When a client requests an OTP, the handler calls `email.SendEmail(requestEmail, 
     // Store JSON in Redis keyed by recipient email
     err = redis.Session().Set(context.Background(), to, jsonData, 4*time.Hour).Err()
     return otp, err
-}`}
-/>
+}
+```
+</CodeBlock>
 
 ### 3. Verification Route (`controllers/POST/postVerificationCode.go`)
 The client sends back the OTP as an integer and their email. Notice the struct definition in `structure/request/verifyOTP.go`:
 
-<CodeBlock
-  filename="structure/request/verifyOTP.go"
-  language="go"
-  code={`type OTPRequest struct {
-    OTP   int    \`json:"otp" binding:"required"\`
-    Email string \`json:"email" binding:"required"\`
-}`}
-/>
+<CodeBlock filename="structure/request/verifyOTP.go" language="go">
+```go
+type OTPRequest struct {
+    OTP   int    `json:"otp" binding:"required"`
+    Email string `json:"email" binding:"required"`
+}
+```
+</CodeBlock>
 
 <Warning title="Data Type Constraint">
 The `otp` field in the JSON body **must be an integer** (e.g., `{"otp": 2519, ...}`), NOT a string (`"2519"`). Sending a string causes Gin's JSON validator to return an HTTP `422 Unprocessable Entity` error.
@@ -287,8 +293,11 @@ In a second terminal, execute the `GET` endpoint to generate an OTP:
   shell="powershell"
   description="Request a verification code"
   command='curl.exe -s "http://localhost:3001/api/getVerificationCode?email=test@example.com&username=devrel"'
-  expectedOutput={`{"status":"true","message":"OTP Generated successfully","otp":"2519"}`}
-/>
+>
+```output
+{"status":"true","message":"OTP Generated successfully","otp":"2519"}
+```
+</CommandBlock>
 
 Now, take the exact 4-digit OTP from the response (in this run, `2519`) and send the `POST /api/verifyCode` request:
 
@@ -296,8 +305,11 @@ Now, take the exact 4-digit OTP from the response (in this run, `2519`) and send
   shell="powershell"
   description="Submit OTP for authentication"
   command='curl.exe -s -X POST "http://localhost:3001/api/verifyCode" -H "Content-Type: application/json" -d "{\"otp\":2519,\"email\":\"test@example.com\"}"'
-  expectedOutput={`{"status":"true","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWx1ZSI6ImV4YW1wbGUuY29tIiwiZXhwIjoxNzkxMDQ3OTg4fQ.eQK64jKGcZQjT77hfuPjAbAczc9M-abPMlto8m7q2Ro","username":"devrel","message":"OTP authenticated successfully"}`}
-/>
+>
+```output
+{"status":"true","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWx1ZSI6ImV4YW1wbGUuY29tIiwiZXhwIjoxNzkxMDQ3OTg4fQ.eQK64jKGcZQjT77hfuPjAbAczc9M-abPMlto8m7q2Ro","username":"devrel","message":"OTP authenticated successfully"}
+```
+</CommandBlock>
 
 Both endpoints returned `HTTP 200 OK` with genuine payload data. Terminate the running instance (`Ctrl + C`) so that port `3001` is free for Keploy to bind.
 </Step>
@@ -386,10 +398,9 @@ Keploy organizes captured interactions inside a `./keploy` directory:
 ### Anatomy of a Generated Test Case (`test-1.yaml`)
 Notice how readable and transparent the generated YAML test definition is:
 
-<CodeBlock
-  filename="keploy/test-set-0/tests/test-1.yaml"
-  language="yaml"
-  code={`version: api.keploy.io/v1beta1
+<CodeBlock filename="keploy/test-set-0/tests/test-1.yaml" language="yaml">
+```yaml
+version: api.keploy.io/v1beta1
 kind: Http
 name: test-1
 spec:
@@ -411,16 +422,16 @@ spec:
   objects: []
   assertions:
     noise: []
-  created: 1727961234`}
-/>
+  created: 1727961234
+```
+</CodeBlock>
 
 ### Anatomy of a Recorded Dependency Mock (`mocks.yaml`)
 Keploy also captures the exact binary wire protocol exchanged between the application and Redis:
 
-<CodeBlock
-  filename="keploy/test-set-0/mocks.yaml"
-  language="yaml"
-  code={`version: api.keploy.io/v1beta1
+<CodeBlock filename="keploy/test-set-0/mocks.yaml" language="yaml">
+```yaml
+version: api.keploy.io/v1beta1
 kind: Generic
 name: mock-0
 spec:
@@ -430,8 +441,9 @@ spec:
   req:
     data: "KGRldnJlbEBrZXBsb3kuaW8..." # Encoded RESP payload
   resp:
-    data: "K09LCg==" # RESP "+OK\\r\\n"`}
-/>
+    data: "K09LCg==" # RESP "+OK\r\n"
+```
+</CodeBlock>
 </Step>
 </section>
 
@@ -457,10 +469,9 @@ The `--delay 10` flag gives the Go application up to 10 seconds to compile and b
 <Step number="6" title="Handling Dynamic JWT Noise Fields">
 When running `keploy test` for the first time on `gin-redis`, you will observe that **Test 1 passes**, but **Test 2 reports a diff failure**:
 
-<CodeBlock
-  filename="Keploy Test Output Diff"
-  language="text"
-  code={`--------------------------------------------------------------------
+<CodeBlock filename="Keploy Test Output Diff" language="text">
+```text
+--------------------------------------------------------------------
 Test Set: test-set-0
 Test Case: test-2 (POST /api/verifyCode)
 Result: FAILED ❌
@@ -468,8 +479,9 @@ Diff:
   resp.body.token:
     expected: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWx1ZSI6ImRldnJlbC5pbyIsImV4cCI6MTcyNzk2NDgzNH0.9sN1..."
     actual:   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2YWx1ZSI6ImRldnJlbC5pbyIsImV4cCI6MTcyNzk2NzAwMH0.2kL8..."
---------------------------------------------------------------------`}
-/>
+--------------------------------------------------------------------
+```
+</CodeBlock>
 
 ### Why Did This Fail?
 In `helpers/token/token.go`, the JWT token includes an expiration claim:
@@ -481,13 +493,13 @@ Because the current timestamp has changed since the test was recorded, the gener
 ### The Solution: Noise Configuration
 Open `keploy/test-set-0/tests/test-2.yaml` and add `body.token` to the `assertions.noise` array:
 
-<CodeBlock
-  filename="keploy/test-set-0/tests/test-2.yaml"
-  language="yaml"
-  code={`  assertions:
+<CodeBlock filename="keploy/test-set-0/tests/test-2.yaml" language="yaml">
+```yaml
+  assertions:
     noise:
-      - body.token`}
-/>
+      - body.token
+```
+</CodeBlock>
 
 Re-run the test command:
 
@@ -495,13 +507,16 @@ Re-run the test command:
   shell="powershell"
   description="Re-run tests with noise configuration applied"
   command='keploy test -c "go run main.go" --delay 10'
-  expectedOutput={`<=========================================>
+>
+```output
+<=========================================>
   TOTAL TESTS: 2
   PASSED: 2
   FAILED: 0
 <=========================================>
-[SUCCESS] All test cases passed!`}
-/>
+[SUCCESS] All test cases passed!
+```
+</CommandBlock>
 
 All test cases now pass cleanly without writing a single line of mocking code!
 </Step>
