@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-primary: #FFFFFF;
+    --bg-secondary: #F8FAFC;
+    --bg-card: #FFFFFF;
+    --border-color: #E2E8F0;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --code-bg: #0F172A;
+    --code-text: #E2E8F0;
+  }
+
+  .dark {
+    --bg-primary: #0B0F17;
+    --bg-secondary: #111726;
+    --bg-card: #151D2F;
+    --border-color: #202D42;
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #94A3B8;
+    --code-bg: #080C14;
+    --code-text: #F1F5F9;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom scrollbar for modern developer feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #94A3B8;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748B;
+}
+
+/* Code block syntax coloring & aesthetics */
+pre {
+  background-color: var(--code-bg) !important;
+  color: var(--code-text) !important;
+  border-radius: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Prose styles for MDX */
+.doc-prose {
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.doc-prose h1, .doc-prose h2, .doc-prose h3, .doc-prose h4 {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.doc-prose h2 {
+  font-size: 1.625rem;
+  margin-top: 2.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.doc-prose h3 {
+  font-size: 1.25rem;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.doc-prose p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.doc-prose ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.doc-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.doc-prose li {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+.doc-prose strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.doc-prose a {
+  color: #ea580c;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.doc-prose a:hover {
+  color: #c2410c;
+}
+
+.doc-prose code:not(pre code) {
+  background-color: rgba(148, 163, 184, 0.15);
+  color: #ea580c;
+  padding: 0.15rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+  font-weight: 500;
+}
+
+.dark .doc-prose code:not(pre code) {
+  background-color: rgba(255, 107, 53, 0.12);
+  color: #fb923c;
+}
+
+.doc-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.doc-prose th {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.doc-prose td {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}

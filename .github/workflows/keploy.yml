@@ -1,0 +1,39 @@
+name: Keploy Replay Tests
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  keploy-test:
+    name: Run Keploy Replay Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install Keploy CLI
+        run: |
+          curl --silent -O -L https://keploy.io/install.sh
+          source install.sh
+
+      - name: Build Go Application Binary
+        run: |
+          cd samples-go/gin-redis
+          go build -o gin-redis .
+
+      - name: Run Keploy Tests in Mock Mode
+        run: |
+          cd samples-go/gin-redis
+          # If a keploy test suite exists, Keploy replays captured interactions
+          if [ -d "keploy" ]; then
+            sudo -E keploy test -c "./gin-redis" --delay 10
+          else
+            echo "No test cases recorded yet in samples-go/gin-redis/keploy. Ready for test suite recording."
+          fi

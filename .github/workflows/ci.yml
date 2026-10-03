@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  build-and-test-docs:
+    name: Build & Validate Documentation Website
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci || npm install
+
+      - name: Typecheck TypeScript
+        run: npm run typecheck
+
+      - name: Build Next.js Static Pages
+        run: npm run build
+
+  build-go-app:
+    name: Validate Go Quickstart Binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+          cache-dependency-path: samples-go/gin-redis/go.sum
+
+      - name: Build Gin-Redis Application
+        run: |
+          cd samples-go/gin-redis
+          go build -v -o gin-redis .
