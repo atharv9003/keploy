@@ -1,18 +1,22 @@
 import React from 'react';
 
 interface InfoCardProps {
-  title: string;
-  items: { label: string; value: string; badge?: string }[];
+  title?: string;
+  items?: { label: string; value: string; badge?: string }[];
 }
 
-export default function InfoCard({ title, items }: InfoCardProps) {
+export default function InfoCard({ title = '', items = [] }: InfoCardProps) {
+  const safeItems = Array.isArray(items) ? items : [];
+
   return (
     <div className="my-6 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 p-5 shadow-sm">
-      <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
-        {title}
-      </h4>
+      {title && (
+        <h4 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3">
+          {title}
+        </h4>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {items.map((item, idx) => (
+        {safeItems.map((item, idx) => (
           <div
             key={idx}
             className="p-3 rounded-lg border border-slate-100 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-800/40"

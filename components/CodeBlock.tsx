@@ -2,7 +2,8 @@ import React from 'react';
 import CopyButton from './CopyButton';
 
 interface CodeBlockProps {
-  code: string;
+  code?: string;
+  children?: React.ReactNode;
   language?: string;
   filename?: string;
   highlightLines?: number[];
@@ -11,12 +12,14 @@ interface CodeBlockProps {
 
 export default function CodeBlock({
   code,
+  children,
   language = 'text',
   filename,
   showLineNumbers = false,
 }: CodeBlockProps) {
-  const trimmedCode = code.trim();
-  const lines = trimmedCode.split('\n');
+  const rawContent = typeof code === 'string' ? code : typeof children === 'string' ? children : '';
+  const trimmedCode = (rawContent || '').trim();
+  const lines = trimmedCode ? trimmedCode.split('\n') : [''];
 
   return (
     <div className="my-5 rounded-xl overflow-hidden border border-slate-700/60 bg-[#0A0E17] shadow-lg text-sm font-mono">

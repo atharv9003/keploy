@@ -3,7 +3,8 @@ import CopyButton from './CopyButton';
 import { Terminal } from 'lucide-react';
 
 interface CommandBlockProps {
-  command: string;
+  command?: string;
+  children?: React.ReactNode;
   shell?: 'powershell' | 'bash' | 'cmd';
   description?: string;
   expectedOutput?: string;
@@ -11,11 +12,13 @@ interface CommandBlockProps {
 
 export default function CommandBlock({
   command,
+  children,
   shell = 'powershell',
   description,
   expectedOutput,
 }: CommandBlockProps) {
-  const trimmed = command.trim();
+  const rawContent = typeof command === 'string' ? command : typeof children === 'string' ? children : '';
+  const trimmed = (rawContent || '').trim();
   const promptSymbol = shell === 'powershell' ? 'PS >' : '$';
 
   return (
@@ -53,7 +56,7 @@ export default function CommandBlock({
             Expected Output
           </div>
           <pre className="!bg-transparent !p-0 !m-0 text-slate-300">
-            <code>{expectedOutput.trim()}</code>
+            <code>{(expectedOutput || '').trim()}</code>
           </pre>
         </div>
       )}
