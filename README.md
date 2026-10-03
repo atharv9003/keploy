@@ -204,11 +204,13 @@ See [`ASSIGNMENT_CHECKLIST.md`](./ASSIGNMENT_CHECKLIST.md) for full itemized tra
 - [x] Production build passes (`npm run build`)
 - [x] TypeScript checks pass (`npm run typecheck`)
 - [x] Browser verification completed via automated subagent
+- [x] GitHub published (`https://github.com/atharv9003/keploy`)
 
 ---
 
 ## 👤 Author
 
 - **Candidate:** DevRel Candidate
-- **GitHub:** `[YOUR_GITHUB_PROFILE_URL]`
-- **Portfolio / LinkedIn:** `[YOUR_LINKEDIN_URL]`
+- **GitHub:** [atharv9003](https://github.com/atharv9003)
+- **Repository:** [https://github.com/atharv9003/keploy](https://github.com/atharv9003/keploy)
+
