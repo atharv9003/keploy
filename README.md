@@ -4,6 +4,9 @@ A single-page, developer-focused documentation website and technical tutorial fo
 
 Built as part of the **Keploy DevRel Candidate Assignment**.
 
+**🌐 Live Documentation Website:** [https://keploy-b3fp.vercel.app](https://keploy-b3fp.vercel.app)  
+**📦 GitHub Repository:** [https://github.com/atharv9003/keploy](https://github.com/atharv9003/keploy)
+
 ---
 
 ## 🎯 Assignment Objective

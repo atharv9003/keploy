@@ -22,4 +22,4 @@
 - [x] Build passes (`npm run build` exits 0 with 4/4 static pages generated)
 - [x] Type check passes (`npm run typecheck` exits 0 with zero errors)
 - [x] GitHub published (Live at https://github.com/atharv9003/keploy with GitHub Actions CI)
-- [x] Vercel deployed (Live and verified on Vercel platform)
+- [x] Vercel deployed (Live at https://keploy-b3fp.vercel.app)
